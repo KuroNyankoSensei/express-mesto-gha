@@ -1,6 +1,14 @@
-/* eslint-disable import/no-unresolved */
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const { createUser, login } = require('./controllers/users');
+const {
+  validateLogin,
+  validateUser,
+} = require('./middlewares/validation');
+const auth = require('./middlewares/auth');
+const handelError = require('./middlewares/handelError');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -10,20 +18,20 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 const app = express();
 app.use(express.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62e57a20b4ebd5896ce2f447',
-  };
 
-  next();
-});
+app.post('/signin', validateLogin, login);
+app.post('/signup', validateUser, createUser);
 
+app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.all('*', (req, res) => {
-  res.status(404).send({ message: 'Страница с таким url не найдена' });
+app.all('*', (req, res, next) => {
+  next(new NotFoundError('Страница с таким url не найдена'));
 });
+
+app.use(errors());
+app.use(handelError);
 
 app.listen(PORT, () => {
   console.log(`Запуск сервера ${PORT}`);
