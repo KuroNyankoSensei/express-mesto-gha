@@ -5,8 +5,7 @@ const BadRequest = require('../errors/BadRequest');
 const ConflictError = require('../errors/ConflictError');
 const AuthError = require('../errors/AuthError');
 
-// eslint-disable-next-line import/no-unresolved
-const User = require('../models/User');
+const User = require('../models/user');
 
 const getUsers = (req, res, next) => {
   User.find({})

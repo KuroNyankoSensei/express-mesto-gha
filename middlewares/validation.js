@@ -34,15 +34,10 @@ const validateUserId = celebrate({
   }),
 });
 
-const validateUpdateName = celebrate({
+const validateUpdateUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-  }),
-});
-
-const validateUpdateAbout = celebrate({
-  body: Joi.object().keys({
-    about: Joi.string().min(2).max(30).required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
   }),
 });
 
@@ -69,8 +64,7 @@ module.exports = {
   validateLogin,
   validateUser,
   validateUserId,
-  validateUpdateName,
-  validateUpdateAbout,
+  validateUpdateUser,
   validateAvatar,
   validationCard,
   validateCardId,
