@@ -34,12 +34,18 @@ const deleteCard = (req, res, next) => {
     })
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        Cards.findByIdAndRemove(cardId).then(() => res.status(200).send(card));
+        Cards.findByIdAndRemove(cardId).then(() => res.status(200).send(card))
+          .catch(next);
       } else {
         throw new ForbiddenError('Невозможно удалить чужую карточку');
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new BadRequest('Передан некорректный id карточки'));
+      }
+      return next(err);
+    });
 };
 
 const likeCard = (req, res, next) => {
